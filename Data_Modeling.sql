@@ -2,6 +2,7 @@ CREATE DATABASE db;
 
 USE db;
 
+-- TASK1(DATA MODELLING)
 
 CREATE TABLE Students (
     StudentID VARCHAR(10) PRIMARY KEY,
@@ -70,3 +71,30 @@ SELECT * FROM Exercises;
 SELECT * FROM Questions;
 SELECT * FROM TestResults;
 SELECT * FROM PerformanceAnalytics;
+
+-- TASK2(QUESTION RANDOMIZATION) 
+
+SELECT QuestionID, QuestionText, Options
+FROM Questions
+WHERE ExerciseID = 'EX001'
+ORDER BY RAND()
+LIMIT 10;
+
+-- TASK3(STUDENT PERFORMANCE)
+
+SELECT 
+    StudentID,
+    COUNT(TestID) AS TotalTestsTaken,
+    SUM(TotalQuestions) AS TotalQuestionsAttempted,
+    SUM(CorrectAnswers) AS TotalCorrectAnswers,
+    (SUM(CorrectAnswers) / SUM(TotalQuestions)) * 100 AS OverallAccuracyPercentage,
+    SUM(TotalMarks) AS TotalMarksObtained
+FROM (
+    SELECT 
+        StudentID,
+        TestID,
+        SUM(MarksAwarded) AS TotalMarks
+    FROM TestResults
+    GROUP BY StudentID, TestID
+) AS TestPerformance
+GROUP BY StudentID;
